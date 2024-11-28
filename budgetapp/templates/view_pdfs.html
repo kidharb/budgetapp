@@ -2,6 +2,8 @@
 <html>
 <head>
     <title>Stored PDFs</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
 </head>
 <body>
     <h1>Stored PDF Contents</h1>
@@ -10,6 +12,6 @@
             <li><strong>{{ pdf.title }}</strong>: <pre>{{ pdf.content }}</pre></li>
         {% endfor %}
     </ul>
-    <a href="{% url 'home' %}">Home</a> <!-- Home Button -->
+    <a href="{% url 'home' %}">Home</a>
 </body>
 </html>
