@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stored PDFs</title>
+</head>
+<body>
+    <h1>Stored PDF Contents</h1>
+    <ul>
+        {% for pdf in pdfs %}
+            <li><strong>{{ pdf.title }}</strong>: <pre>{{ pdf.content }}</pre></li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
