@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from PyPDF2 import PdfReader
 import io
@@ -29,6 +29,12 @@ def upload_pdf(request):
 def view_pdfs(request):
     pdfs = PDFContent.objects.all()
     return render(request, 'view_pdfs.html', {'pdfs': pdfs})
+
+def delete_pdf(request, pdf_id):
+    pdf = get_object_or_404(PDFContent, id=pdf_id)
+    pdf.delete()
+    return redirect('view_pdfs')
+
 
 def home(request):
     return render(request, 'home.html')

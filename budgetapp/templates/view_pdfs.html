@@ -9,7 +9,10 @@
     <h1>Stored PDF Contents</h1>
     <ul>
         {% for pdf in pdfs %}
-            <li><strong>{{ pdf.title }}</strong>: <pre>{{ pdf.content }}</pre></li>
+            <li>
+                <strong>{{ pdf.title }}</strong>: <pre>{{ pdf.content }}</pre>
+                <a href="{% url 'delete_pdf' pdf.id %}">Delete</a>
+            </li>
         {% endfor %}
     </ul>
     <a href="{% url 'home' %}">Home</a>
