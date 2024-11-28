@@ -29,3 +29,6 @@ def upload_pdf(request):
 def view_pdfs(request):
     pdfs = PDFContent.objects.all()
     return render(request, 'view_pdfs.html', {'pdfs': pdfs})
+
+def home(request):
+    return render(request, 'home.html')
