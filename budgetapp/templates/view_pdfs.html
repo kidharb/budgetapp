@@ -165,6 +165,37 @@
                                    .attr("fill", "steelblue")
                                    .style("opacity", 0);
 
+            const overlayCircle = svg.append("circle")
+                                     .attr("r", 30)  // Adjust the size of the overlay circle here
+                                     .attr("fill", "none")
+                                     .attr("pointer-events", "all");
+
+            // Move the overlay circle with the mouse
+            svg.on("mousemove", function(event) {
+                const [mouseX, mouseY] = d3.pointer(event);
+                const xDate = x.invert(mouseX);
+                const closestData = data.reduce((prev, curr) =>
+                    Math.abs(curr.date - xDate) < Math.abs(prev.date - xDate) ? curr : prev
+                );
+                overlayCircle.attr("cx", x(closestData.date))
+                             .attr("cy", y(closestData.balance));
+                focusCircle.attr("cx", x(closestData.date))
+                           .attr("cy", y(closestData.balance))
+                           .style("opacity", 1);
+                tooltip.transition()
+                       .duration(200)
+                       .style("opacity", .9);
+                tooltip.html(`Date: ${closestData.date.toDateString()}<br>Balance: ${closestData.balance}`)
+                       .style("left", (event.pageX + 5) + "px")
+                       .style("top", (event.pageY - 28) + "px");
+            })
+            .on("mouseout", function() {
+                focusCircle.style("opacity", 0);
+                tooltip.transition()
+                       .duration(500)
+                       .style("opacity", 0);
+            });
+
             svg.selectAll("circle.data-point")
                .data(data)
                .enter()
@@ -173,30 +204,7 @@
                .attr("cx", d => x(d.date))
                .attr("cy", d => y(d.balance))
                .attr("r", 3)
-               .attr("fill", "steelblue")
-               .on("mouseover", function(event, d) {
-                   d3.select(this).transition()
-                                  .duration(200)
-                                  .attr("r", 8);
-                   focusCircle.style("opacity", 1)
-                              .attr("cx", x(d.date))
-                              .attr("cy", y(d.balance));
-                   tooltip.transition()
-                          .duration(200)
-                          .style("opacity", .9);
-                   tooltip.html(`Date: ${d.date.toDateString()}<br>Balance: ${d.balance}`)
-                          .style("left", (event.pageX + 5) + "px")
-                          .style("top", (event.pageY - 28) + "px");
-               })
-               .on("mouseout", function(d) {
-                   d3.select(this).transition()
-                                  .duration(200)
-                                  .attr("r", 3);
-                   focusCircle.style("opacity", 0);
-                   tooltip.transition()
-                          .duration(500)
-                          .style("opacity", 0);
-               });
+               .attr("fill", "steelblue");
         });
     </script>
 </body>
