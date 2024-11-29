@@ -117,7 +117,7 @@ def upload_csv(request):
     return render(request, 'upload.html', {'form': form})
 
 def view_pdfs(request):
-    pdfs = PDFContent.objects.all()
+    pdfs = PDFContent.objects.all().order_by('-field4')  # Assuming field4 is Transaction Date
     return render(request, 'view_pdfs.html', {'pdfs': pdfs})
 
 def delete_pdf(request, pdf_id):
