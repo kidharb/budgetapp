@@ -6,45 +6,72 @@
     <title>Stored Data</title>
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .account-col { width: 150px; }
+        .posting-date-col { width: 150px; }
+        .transaction-date-col { width: 180px; }
+        .description-col { width: 250px; }
+        .original-description-col { width: 250px; }
+        .category-col { width: 150px; }
+        .money-in-col { width: 120px; }
+        .money-out-col { width: 120px; }
+        .fee-col { width: 100px; }
+        .balance-col { width: 150px; }
+        .actions-col { width: 100px; }
+    </style>
 </head>
 <body>
     <div class="container">
+        <a href="{% url 'home' %}">Home</a>
+        <h2>Balance Graph</h2>
+        <img src="{% url 'plot_balance_graph' %}" alt="Balance Graph">
         <h1>Transactions</h1>
         <table>
             <thead>
                 <tr>
-                    <th>Account</th>
-                    <th>Posting Date</th>
-                    <th>Transaction Date</th>
-                    <th>Description</th>
-                    <th>Original Description</th>
-                    <th>Category</th>
-                    <th>Money In</th>
-                    <th>Money Out</th>
-                    <th>Fee</th>
-                    <th>Balance</th>
-                    <th>Actions</th>
+                    <th class="account-col">Account</th>
+                    <th class="posting-date-col">Posting Date</th>
+                    <th class="transaction-date-col">Transaction Date</th>
+                    <th class="description-col">Description</th>
+                    <th class="original-description-col">Original Description</th>
+                    <th class="category-col">Category</th>
+                    <th class="money-in-col">Money In</th>
+                    <th class="money-out-col">Money Out</th>
+                    <th class="fee-col">Fee</th>
+                    <th class="balance-col">Balance</th>
+                    <th class="actions-col">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for pdf in pdfs %}
                     <tr>
-                        <td>{{ pdf.field2 }}</td>
-                        <td>{{ pdf.field3 }}</td>
-                        <td>{{ pdf.field4 }}</td>
-                        <td>{{ pdf.field5 }}</td>
-                        <td>{{ pdf.field6 }}</td>
-                        <td>{{ pdf.field7 }}</td>
-                        <td>{{ pdf.field8 }}</td>
-                        <td>{{ pdf.field9 }}</td>
-                        <td>{{ pdf.field10 }}</td>
-                        <td>{{ pdf.field11 }}</td>
-                        <td><a href="{% url 'delete_pdf' pdf.id %}">Delete</a></td>
+                        <td class="account-col">{{ pdf.field2 }}</td>
+                        <td class="posting-date-col">{{ pdf.field3 }}</td>
+                        <td class="transaction-date-col">{{ pdf.field4 }}</td>
+                        <td class="description-col">{{ pdf.field5 }}</td>
+                        <td class="original-description-col">{{ pdf.field6 }}</td>
+                        <td class="category-col">{{ pdf.field7 }}</td>
+                        <td class="money-in-col">{{ pdf.field8 }}</td>
+                        <td class="money-out-col">{{ pdf.field9 }}</td>
+                        <td class="fee-col">{{ pdf.field10 }}</td>
+                        <td class="balance-col">{{ pdf.field11 }}</td>
+                        <td class="actions-col"><a href="{% url 'delete_pdf' pdf.id %}">Delete</a></td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
-        <a href="{% url 'home' %}">Home</a>
     </div>
 </body>
 </html>

@@ -36,17 +36,15 @@ from .forms import CSVUploadForm
 from .models import PDFContent
 from datetime import datetime
 
-def remove_duplicates(text):
-    if isinstance(text, str):
-        words = text.split()
-        unique_words = []
-        seen = set()
-        for word in words:
-            if word.lower() not in seen:
-                unique_words.append(word)
-                seen.add(word.lower())
-        return ' '.join(unique_words)
-    return text
+import matplotlib.pyplot as plt
+import pandas as pd
+import html
+from io import StringIO, BytesIO
+from django.http import HttpResponse
+from django.shortcuts import redirect, render
+from .forms import CSVUploadForm
+from .models import PDFContent
+from datetime import datetime
 
 def upload_csv(request):
     if request.method == 'POST':
@@ -73,7 +71,7 @@ def upload_csv(request):
                 df = df.fillna(0)  # Handle empty numeric fields
 
                 # Remove whitespace and duplicate words from all string fields
-                df = df.applymap(lambda x: remove_duplicates(x.strip()) if isinstance(x, str) else x)
+                df = df.applymap(lambda x: x.strip() if isinstance(x, str) else x)
 
                 # Convert 'Transaction Date' to 24-hour format
                 df['Transaction Date'] = df['Transaction Date'].apply(lambda x: datetime.strptime(x, '%Y-%m-%d %H:%M').strftime('%Y-%m-%d %H:%M') if isinstance(x, str) else x)
@@ -116,6 +114,27 @@ def upload_csv(request):
 
     return render(request, 'upload.html', {'form': form})
 
+def plot_balance_graph(request):
+    pdfs = PDFContent.objects.all().order_by('field4')  # Sorting in ascending order for the graph
+    dates = [pdf.field4 for pdf in pdfs]
+    balances = [pdf.field11 for pdf in pdfs]
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(dates, balances, marker='o')
+    plt.title('Balance Over Time')
+    plt.xlabel('Transaction Date')
+    plt.ylabel('Balance')
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+
+    # Save the plot to a BytesIO object
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    plt.close()
+    buffer.seek(0)
+
+    return HttpResponse(buffer, content_type='image/png')
+
 def view_pdfs(request):
     pdfs = PDFContent.objects.all().order_by('-field4')  # Assuming field4 is Transaction Date
     return render(request, 'view_pdfs.html', {'pdfs': pdfs})
@@ -124,6 +143,7 @@ def delete_pdf(request, pdf_id):
     pdf = get_object_or_404(PDFContent, id=pdf_id)
     pdf.delete()
     return redirect('view_pdfs')
+
 
 def google_login(request):
     if request.user.is_authenticated:
