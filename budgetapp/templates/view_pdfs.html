@@ -7,6 +7,16 @@
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
     <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -30,13 +40,44 @@
         .fee-col { width: 100px; }
         .balance-col { width: 150px; }
         .actions-col { width: 100px; }
+        #chart {
+            width: 100%;
+            height: 500px;
+            text-align: center;
+            margin: 0 auto;
+        }
+        .tooltip {
+            position: absolute;
+            text-align: center;
+            width: 100px;
+            height: 40px;
+            padding: 2px;
+            font: 12px sans-serif;
+            background: lightsteelblue;
+            border: 0px;
+            border-radius: 8px;
+            pointer-events: none;
+        }
+        .home-link, .actions-col a {
+            display: inline-block;
+            padding: 8px 16px;
+            margin-bottom: 20px;
+            text-decoration: none;
+            color: white;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 4px;
+            text-align: center;
+        }
     </style>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
     <div class="container">
-        <a href="{% url 'home' %}">Home</a>
-        <h2>Balance Graph</h2>
-        <img src="{% url 'plot_balance_graph' %}" alt="Balance Graph">
+        <a href="{% url 'home' %}" class="home-link">Home</a>
+        <div id="chart"></div>
+        <div id="tooltip" class="tooltip" style="opacity:0;"></div>
+
         <h1>Transactions</h1>
         <table>
             <thead>
@@ -73,5 +114,90 @@
             </tbody>
         </table>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const data = [
+                {% for pdf in pdfs %}
+                {
+                    date: new Date("{{ pdf.field4|date:'Y-m-d\\TH:i' }}"),
+                    balance: {{ pdf.field11 }}
+                },
+                {% endfor %}
+            ];
+
+            const margin = { top: 20, right: 30, bottom: 40, left: 50 };
+            const width = document.getElementById('chart').clientWidth - margin.left - margin.right;
+            const height = 500 - margin.top - margin.bottom;
+
+            const svg = d3.select("#chart")
+                          .append("svg")
+                          .attr("width", width + margin.left + margin.right)
+                          .attr("height", height + margin.top + margin.bottom)
+                          .append("g")
+                          .attr("transform", `translate(${margin.left},${margin.top})`);
+
+            const x = d3.scaleTime()
+                        .domain(d3.extent(data, d => d.date))
+                        .range([0, width]);
+            svg.append("g")
+               .attr("transform", `translate(0,${height})`)
+               .call(d3.axisBottom(x));
+
+            const y = d3.scaleLinear()
+                        .domain([0, d3.max(data, d => d.balance)])
+                        .range([height, 0]);
+            svg.append("g")
+               .call(d3.axisLeft(y));
+
+            svg.append("path")
+               .datum(data)
+               .attr("fill", "none")
+               .attr("stroke", "steelblue")
+               .attr("stroke-width", 1.5)
+               .attr("d", d3.line()
+                            .x(d => x(d.date))
+                            .y(d => y(d.balance)));
+
+            const tooltip = d3.select("#tooltip");
+
+            const focusCircle = svg.append("circle")
+                                   .attr("r", 8)
+                                   .attr("fill", "steelblue")
+                                   .style("opacity", 0);
+
+            svg.selectAll("circle.data-point")
+               .data(data)
+               .enter()
+               .append("circle")
+               .attr("class", "data-point")
+               .attr("cx", d => x(d.date))
+               .attr("cy", d => y(d.balance))
+               .attr("r", 3)
+               .attr("fill", "steelblue")
+               .on("mouseover", function(event, d) {
+                   d3.select(this).transition()
+                                  .duration(200)
+                                  .attr("r", 8);
+                   focusCircle.style("opacity", 1)
+                              .attr("cx", x(d.date))
+                              .attr("cy", y(d.balance));
+                   tooltip.transition()
+                          .duration(200)
+                          .style("opacity", .9);
+                   tooltip.html(`Date: ${d.date.toDateString()}<br>Balance: ${d.balance}`)
+                          .style("left", (event.pageX + 5) + "px")
+                          .style("top", (event.pageY - 28) + "px");
+               })
+               .on("mouseout", function(d) {
+                   d3.select(this).transition()
+                                  .duration(200)
+                                  .attr("r", 3);
+                   focusCircle.style("opacity", 0);
+                   tooltip.transition()
+                          .duration(500)
+                          .style("opacity", 0);
+               });
+        });
+    </script>
 </body>
 </html>
