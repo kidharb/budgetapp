@@ -1,20 +1,52 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Stored PDFs</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stored Data</title>
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
 </head>
 <body>
-    <h1>Stored PDF Contents</h1>
-    <ul>
-        {% for pdf in pdfs %}
-            <li>
-                <strong>{{ pdf.title }}</strong>: <pre>{{ pdf.content }}</pre>
-                <a href="{% url 'delete_pdf' pdf.id %}">Delete</a>
-            </li>
-        {% endfor %}
-    </ul>
-    <a href="{% url 'home' %}">Home</a>
+    <div class="container">
+        <h1>Stored CSV Data</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nr</th>
+                    <th>Account</th>
+                    <th>Posting Date</th>
+                    <th>Transaction Date</th>
+                    <th>Description</th>
+                    <th>Original Description</th>
+                    <th>Category</th>
+                    <th>Money In</th>
+                    <th>Money Out</th>
+                    <th>Fee</th>
+                    <th>Balance</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pdf in pdfs %}
+                    <tr>
+                        <td>{{ pdf.field1 }}</td>
+                        <td>{{ pdf.field2 }}</td>
+                        <td>{{ pdf.field3 }}</td>
+                        <td>{{ pdf.field4 }}</td>
+                        <td>{{ pdf.field5 }}</td>
+                        <td>{{ pdf.field6 }}</td>
+                        <td>{{ pdf.field7 }}</td>
+                        <td>{{ pdf.field8 }}</td>
+                        <td>{{ pdf.field9 }}</td>
+                        <td>{{ pdf.field10 }}</td>
+                        <td>{{ pdf.field11 }}</td>
+                        <td><a href="{% url 'delete_pdf' pdf.id %}">Delete</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a href="{% url 'home' %}">Home</a>
+    </div>
 </body>
 </html>

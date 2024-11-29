@@ -1,4 +1,4 @@
 from django import forms
 
-class PDFUploadForm(forms.Form):
-    pdf = forms.FileField()
+class CSVUploadForm(forms.Form):
+    csv_text = forms.CharField(widget=forms.Textarea, label='CSV Text')
