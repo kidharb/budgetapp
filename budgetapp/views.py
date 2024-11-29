@@ -4,7 +4,7 @@ from social_core.exceptions import MissingBackend, AuthException
 from django.contrib.auth import login as auth_login
 from django.conf import settings
 from django.http import HttpResponse
-
+import html
 import pandas as pd
 from io import StringIO
 from .models import PDFContent
@@ -15,25 +15,77 @@ logger = logging.getLogger('django')
 
 def home(request):
     return render(request, 'home.html')
+def remove_duplicates(text):
+    if isinstance(text, str):
+        words = text.split()
+        unique_words = []
+        seen = set()
+        for word in words:
+            if word.lower() not in seen:
+                unique_words.append(word)
+                seen.add(word.lower())
+        return ' '.join(unique_words)
+    return text
+
+import pandas as pd
+import html
+from io import StringIO
+from django.http import HttpResponse
+from django.shortcuts import redirect, render
+from .forms import CSVUploadForm
+from .models import PDFContent
+from datetime import datetime
+
+def remove_duplicates(text):
+    if isinstance(text, str):
+        words = text.split()
+        unique_words = []
+        seen = set()
+        for word in words:
+            if word.lower() not in seen:
+                unique_words.append(word)
+                seen.add(word.lower())
+        return ' '.join(unique_words)
+    return text
 
 def upload_csv(request):
     if request.method == 'POST':
         form = CSVUploadForm(request.POST)
         if form.is_valid():
             csv_text = form.cleaned_data['csv_text']
-            csv_data = StringIO(csv_text)
 
+            # Sanitize input
+            sanitized_csv_text = html.escape(csv_text)
+
+            # Validate and process CSV content
+            csv_data = StringIO(sanitized_csv_text)
             try:
-                # Read CSV data
-                df = pd.read_csv(csv_data, delimiter=',', on_bad_lines='warn')
+                # Read CSV data with proper handling of empty fields
+                df = pd.read_csv(csv_data, delimiter=',', keep_default_na=False)
+
+                # Validate CSV headers
+                expected_headers = ['Nr', 'Account', 'Posting Date', 'Transaction Date', 'Description', 'Original Description', 'Category', 'Money In', 'Money Out', 'Fee', 'Balance']
+                if list(df.columns) != expected_headers:
+                    raise ValueError("Invalid CSV headers")
 
                 # Ensure columns are named appropriately, excluding 'Nr'
-                df.columns = ['Nr', 'Account', 'Posting Date', 'Transaction Date', 'Description', 'Original Description', 'Category', 'Money In', 'Money Out', 'Fee', 'Balance']
-                df = df.fillna(0)
-                logger.debug(df)
+                df.columns = expected_headers
+                df = df.fillna(0)  # Handle empty numeric fields
+
+                # Remove whitespace and duplicate words from all string fields
+                df = df.applymap(lambda x: remove_duplicates(x.strip()) if isinstance(x, str) else x)
+
+                # Convert 'Transaction Date' to 24-hour format
+                df['Transaction Date'] = df['Transaction Date'].apply(lambda x: datetime.strptime(x, '%Y-%m-%d %H:%M').strftime('%Y-%m-%d %H:%M') if isinstance(x, str) else x)
 
                 # Save each row to the database, excluding 'Nr'
                 for _, row in df.iterrows():
+                    # Ensure correct data type for numerical values and handle empty strings
+                    row['Money In'] = float(row['Money In']) if row['Money In'] != '' else 0.0
+                    row['Money Out'] = float(row['Money Out']) if row['Money Out'] != '' else 0.0
+                    row['Fee'] = float(row['Fee']) if row['Fee'] != '' else 0.0
+                    row['Balance'] = float(row['Balance']) if row['Balance'] != '' else 0.0
+
                     # Check for existing record
                     existing = PDFContent.objects.filter(
                         field4=row['Transaction Date'],
@@ -41,11 +93,19 @@ def upload_csv(request):
 
                     if not existing:
                         pdf_content = PDFContent(
+                            field2=row['Account'],
+                            field3=row['Posting Date'],
                             field4=row['Transaction Date'],
+                            field5=row['Description'],
+                            field6=row['Original Description'],
+                            field7=row['Category'],
+                            field8=row['Money In'],
+                            field9=row['Money Out'],
+                            field10=row['Fee'],
+                            field11=row['Balance']
                         )
                         pdf_content.save()
                     else:
-                        logger.warning(f"Duplicate entry found: {row['Account']}, {row['Posting Date']}")
                         continue
             except Exception as e:
                 return HttpResponse(f"Error processing CSV data: {e}")
