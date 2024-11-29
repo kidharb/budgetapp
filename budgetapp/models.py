@@ -1,10 +1,9 @@
 from django.db import models
 
 class PDFContent(models.Model):
-    field1 = models.CharField(max_length=255, blank=True, null=True)
     field2 = models.CharField(max_length=255, blank=True, null=True)
     field3 = models.DateField(blank=True, null=True)
-    field4 = models.DateTimeField(blank=True, null=True)
+    field4 = models.DateTimeField(blank=True, null=True, unique=True)
     field5 = models.CharField(max_length=255, blank=True, null=True)
     field6 = models.CharField(max_length=255, blank=True, null=True)
     field7 = models.CharField(max_length=255, blank=True, null=True)

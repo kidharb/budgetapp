@@ -24,28 +24,29 @@ def upload_csv(request):
             csv_data = StringIO(csv_text)
 
             try:
-                # Read CSV data with flexibility on delimiter and error handling
+                # Read CSV data
                 df = pd.read_csv(csv_data, delimiter=',', on_bad_lines='warn')
 
-                # Ensure columns are named appropriately
+                # Ensure columns are named appropriately, excluding 'Nr'
                 df.columns = ['Nr', 'Account', 'Posting Date', 'Transaction Date', 'Description', 'Original Description', 'Category', 'Money In', 'Money Out', 'Fee', 'Balance']
                 df = df.fillna(0)
                 logger.debug(df)
-                for index, row in df.iterrows():
-                    pdf_content = PDFContent(
-                        field1=row['Nr'],
-                        field2=row['Account'],
-                        field3=row['Posting Date'],
+
+                # Save each row to the database, excluding 'Nr'
+                for _, row in df.iterrows():
+                    # Check for existing record
+                    existing = PDFContent.objects.filter(
                         field4=row['Transaction Date'],
-                        field5=row['Description'],
-                        field6=row['Original Description'],
-                        field7=row['Category'],
-                        field8=row['Money In'],
-                        field9=row['Money Out'],
-                        field10=row['Fee'],
-                        field11=row['Balance']
-                    )
-                    pdf_content.save()
+                    ).exists()
+
+                    if not existing:
+                        pdf_content = PDFContent(
+                            field4=row['Transaction Date'],
+                        )
+                        pdf_content.save()
+                    else:
+                        logger.warning(f"Duplicate entry found: {row['Account']}, {row['Posting Date']}")
+                        continue
             except Exception as e:
                 return HttpResponse(f"Error processing CSV data: {e}")
 
