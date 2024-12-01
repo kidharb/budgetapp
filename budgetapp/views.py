@@ -11,17 +11,20 @@ from io import StringIO
 from .forms import CSVUploadForm
 import logging
 from rest_framework import viewsets
-from .models import PDFContent
-from .serializers import PDFContentSerializer
+from .models import CSVContent
+from .serializers import CSVContentSerializer
+from django.utils import timezone
+import pytz
 
 logger = logging.getLogger('django')
 
-class PDFContentViewSet(viewsets.ModelViewSet):
-    queryset = PDFContent.objects.all()
-    serializer_class = PDFContentSerializer
+class CSVContentViewSet(viewsets.ModelViewSet):
+    queryset = CSVContent.objects.all()
+    serializer_class = CSVContentSerializer
 
 def home(request):
     return render(request, 'home.html')
+
 def remove_duplicates(text):
     if isinstance(text, str):
         words = text.split()
@@ -59,10 +62,10 @@ def upload_csv(request):
                 df = df.fillna(0)  # Handle empty numeric fields
 
                 # Remove whitespace and duplicate words from all string fields
-                df = df.applymap(lambda x: x.strip() if isinstance(x, str) else x)
+                df = df.map(lambda x: x.strip() if isinstance(x, str) else x)
 
-                # Convert 'Transaction Date' to 24-hour format
-                df['Transaction Date'] = df['Transaction Date'].apply(lambda x: datetime.datetime.strptime(x, '%Y-%m-%d %H:%M').strftime('%Y-%m-%d %H:%M') if isinstance(x, str) else x)
+                # Convert 'Transaction Date' to timezone-aware datetime
+                df['Transaction Date'] = df['Transaction Date'].apply(lambda x: timezone.make_aware(datetime.datetime.strptime(x, '%Y-%m-%d %H:%M'), timezone=pytz.UTC) if isinstance(x, str) else x)
 
                 # Save each row to the database, excluding 'Nr'
                 for _, row in df.iterrows():
@@ -73,12 +76,12 @@ def upload_csv(request):
                     row['Balance'] = float(row['Balance']) if row['Balance'] != '' else 0.0
 
                     # Check for existing record
-                    existing = PDFContent.objects.filter(
+                    existing = CSVContent.objects.filter(
                         field4=row['Transaction Date'],
                     ).exists()
 
                     if not existing:
-                        pdf_content = PDFContent(
+                        csv_content = CSVContent(
                             field2=row['Account'],
                             field3=row['Posting Date'],
                             field4=row['Transaction Date'],
@@ -90,20 +93,21 @@ def upload_csv(request):
                             field10=row['Fee'],
                             field11=row['Balance']
                         )
-                        pdf_content.save()
+                        csv_content.save()
                     else:
                         continue
             except Exception as e:
                 return HttpResponse(f"Error processing CSV data: {e}")
 
-            return redirect('view_pdfs')
+            return redirect('view_transactions')
     else:
         form = CSVUploadForm()
 
     return render(request, 'upload.html', {'form': form})
 
+# The rest of your code remains unchanged
 def plot_balance_graph(request):
-    pdfs = PDFContent.objects.all().order_by('field4')  # Sorting in ascending order for the graph
+    pdfs = CSVContent.objects.all().order_by('field4')  # Sorting in ascending order for the graph
     dates = [pdf.field4 for pdf in pdfs]
     balances = [pdf.field11 for pdf in pdfs]
 
@@ -123,14 +127,14 @@ def plot_balance_graph(request):
 
     return HttpResponse(buffer, content_type='image/png')
 
-def view_pdfs(request):
-    pdfs = PDFContent.objects.all().order_by('-field4')  # Assuming field4 is Transaction Date
-    return render(request, 'view_pdfs.html', {'pdfs': pdfs})
+def view_transactions(request):
+    transactions = CSVContent.objects.all().order_by('-field4')  # Assuming field4 is Transaction Date
+    return render(request, 'view_transactions.html', {'transactions': transactions})
 
-def delete_pdf(request, pdf_id):
-    pdf = get_object_or_404(PDFContent, id=pdf_id)
-    pdf.delete()
-    return redirect('view_pdfs')
+def delete_transaction(request, transaction_id):
+    csv = get_object_or_404(CSVContent, id=transaction_id)
+    csv.delete()
+    return redirect('view_transactions')
 
 
 def google_login(request):

@@ -1,4 +1,4 @@
 from django.contrib import admin
-from .models import PDFContent
+from .models import CSVContent
 
-admin.site.register(PDFContent)
+admin.site.register(CSVContent)

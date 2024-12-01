@@ -1,6 +1,6 @@
 from django.db import models
 
-class PDFContent(models.Model):
+class CSVContent(models.Model):
     field2 = models.CharField(max_length=255, blank=True, null=True)
     field3 = models.DateField(blank=True, null=True)
     field4 = models.DateTimeField(blank=True, null=True, unique=True)

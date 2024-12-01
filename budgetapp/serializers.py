@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from .models import PDFContent
+from .models import CSVContent
 
-class PDFContentSerializer(serializers.ModelSerializer):
+class CSVContentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = PDFContent
+        model = CSVContent
         fields = '__all__'

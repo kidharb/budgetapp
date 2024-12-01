@@ -96,19 +96,19 @@
                 </tr>
             </thead>
             <tbody>
-                {% for pdf in pdfs %}
+                {% for transaction in transactions %}
                     <tr>
-                        <td class="account-col">{{ pdf.field2 }}</td>
-                        <td class="posting-date-col">{{ pdf.field3 }}</td>
-                        <td class="transaction-date-col">{{ pdf.field4 }}</td>
-                        <td class="description-col">{{ pdf.field5 }}</td>
-                        <td class="original-description-col">{{ pdf.field6 }}</td>
-                        <td class="category-col">{{ pdf.field7 }}</td>
-                        <td class="money-in-col">{{ pdf.field8 }}</td>
-                        <td class="money-out-col">{{ pdf.field9 }}</td>
-                        <td class="fee-col">{{ pdf.field10 }}</td>
-                        <td class="balance-col">{{ pdf.field11 }}</td>
-                        <td class="actions-col"><a href="{% url 'delete_pdf' pdf.id %}">Delete</a></td>
+                        <td class="account-col">{{ transaction.field2 }}</td>
+                        <td class="posting-date-col">{{ transaction.field3 }}</td>
+                        <td class="transaction-date-col">{{ transaction.field4 }}</td>
+                        <td class="description-col">{{ transaction.field5 }}</td>
+                        <td class="original-description-col">{{ transaction.field6 }}</td>
+                        <td class="category-col">{{ transaction.field7 }}</td>
+                        <td class="money-in-col">{{ transaction.field8 }}</td>
+                        <td class="money-out-col">{{ transaction.field9 }}</td>
+                        <td class="fee-col">{{ transaction.field10 }}</td>
+                        <td class="balance-col">{{ transaction.field11 }}</td>
+                        <td class="actions-col"><a href="{% url 'delete_transaction' transaction.id %}">Delete</a></td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -117,10 +117,10 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const data = [
-                {% for pdf in pdfs %}
+                {% for row in transactions %}
                 {
-                    date: new Date("{{ pdf.field4|date:'Y-m-d\\TH:i' }}"),
-                    balance: {{ pdf.field11 }}
+                    date: new Date("{{ row.field4|date:'Y-m-d\\TH:i' }}"),
+                    balance: {{ row.field11 }}
                 },
                 {% endfor %}
             ];
