@@ -5,9 +5,9 @@ from django.contrib.auth import login as auth_login
 from django.conf import settings
 from django.http import HttpResponse
 import html
+import datetime
 import pandas as pd
 from io import StringIO
-from .models import PDFContent
 from .forms import CSVUploadForm
 import logging
 from rest_framework import viewsets
@@ -62,7 +62,7 @@ def upload_csv(request):
                 df = df.applymap(lambda x: x.strip() if isinstance(x, str) else x)
 
                 # Convert 'Transaction Date' to 24-hour format
-                df['Transaction Date'] = df['Transaction Date'].apply(lambda x: datetime.strptime(x, '%Y-%m-%d %H:%M').strftime('%Y-%m-%d %H:%M') if isinstance(x, str) else x)
+                df['Transaction Date'] = df['Transaction Date'].apply(lambda x: datetime.datetime.strptime(x, '%Y-%m-%d %H:%M').strftime('%Y-%m-%d %H:%M') if isinstance(x, str) else x)
 
                 # Save each row to the database, excluding 'Nr'
                 for _, row in df.iterrows():

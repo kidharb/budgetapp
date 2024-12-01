@@ -1,0 +1,30 @@
+Nr,Account,Posting Date,Transaction Date,Description,Original Description,Category,Money In,Money Out,Fee,Balance
+1,2282980804,2024-11-28,2024-11-28 16:33,Checkers Sb085371 (Card 7786),Checkers Ferndale      SB085371       ZA,Groceries,,-3000.00,,98860.58
+2,2282980804,2024-11-27,2024-11-27 18:11,Checkers Sb085371 (Card 7786),Checkers Ferndale      SB085371       ZA,Groceries,,-3000.00,,98860.58
+3,2282980804,2024-11-25,2024-11-25 01:55,Payment Received: Capitec   Capitec Salary      Salary    2102131782,CAPITEC   Capitec Salary      SALARY    2102131782,Salary,86559.63,,,98860.58
+4,2282980804,2024-11-23,2024-11-23 01:11,Live Better Round-up Transfer,Round-up Transfer,Transfer,,-0.01,,12300.95
+5,2282980804,2024-11-22,2024-11-20 12:29,Till Cash Withdrawal Fee,PnP Fam Ferndale Repub Randburg       ZA,Fees,,,-2.00,12300.96
+6,2282980804,2024-11-22,2024-11-20 12:29,Card Purchase & Cashback (R1 900.00) Pick n Pay Randburg (Card 7786),PnP Fam Ferndale Repub RANDBURG     GPZA,Groceries,,-1919.99,,12302.96
+7,2282980804,2024-11-21,2024-11-21 13:56,Banking App Pay Me Payment Farewell,FAREWELL,Digital Payments,,-250.00,,14222.95
+8,2282980804,2024-11-20,2024-11-18 12:10,Till Cash Withdrawal Fee,PnP Fam Ferndale Repub Randburg       ZA,Fees,,,-2.00,14472.95
+9,2282980804,2024-11-20,2024-11-18 12:10,Cash Withdrawal: Pnp Fam Ferndale Repub Randburg     Gpza,PnP Fam Ferndale Repub RANDBURG     GPZA,Cash Withdrawal,,-2000.00,,14474.95
+10,2282980804,2024-11-19,2024-11-19 18:13,External Payment Fee,,Fees,,,-2.00,16474.95
+11,2282980804,2024-11-19,2024-11-19 18:13,Banking App External Payment: Billy Secupgrade,BILLY SECUPGRADE,Uncategorised,,-2700.00,,16476.95
+12,2282980804,2024-11-18,2024-11-18 13:10,External Payment Fee,,Fees,,,-2.00,19176.95
+13,2282980804,2024-11-18,2024-11-18 13:10,Banking App External Payment: Pest Control,PEST CONTROL,Uncategorised,,-1050.00,,19178.95
+14,2282980804,2024-11-18,2024-11-18 13:06,Banking App Transfer to Credit Card (6013080266) Transfer,Transfer,Transfer,,-20000.00,,20228.95
+15,2282980804,2024-11-17,2024-11-17 00:18,Live Better Round-up Transfer,Round-up Transfer,Transfer,,-3.96,,40228.95
+16,2282980804,2024-11-16,2024-11-14 18:23,International Processing Online Purchase Fee: Digitalocean.com,DIGITALOCEAN.COM       +310000000     NL,Fees,,,-3.00,40232.91
+17,2282980804,2024-11-16,2024-11-14 18:23,Online Purchase: Digitalocean.com Amsterdam (Card 4073),DIGITALOCEAN.COM       AMSTERDAM    NHNL,Software/Games,,-126.04,,40235.91
+18,2282980804,2024-11-13,2024-11-13 17:51,Payment Received: Cashfocus Takealot.com        Transfer  2088732952,CASHFOCUS TAKEALOT.COM        TRANSFER  2088732952,Other Income,600.00,,,40361.95
+19,2282980804,2024-11-10,2024-11-10 09:47,Immediate Payment Fee,,Fees,,,-1.00,39761.95
+20,2282980804,2024-11-10,2024-11-10 09:47,Banking App Immediate Payment Sharda,SHARDA,Digital Payments,,-200.00,,39762.95
+21,2282980804,2024-11-07,2024-11-07 18:28,Payment Received: 7760                          Transfer  2084319982,7760                          TRANSFER  2084319982,Other Income,10500.00,,,39962.95
+22,2282980804,2024-11-07,2024-11-05 12:55,Till Cash Withdrawal Fee,PnP Fam Ferndale Repub Randburg       ZA,Fees,,,-2.00,29462.95
+23,2282980804,2024-11-07,2024-11-05 12:55,Cash Withdrawal: Pnp Fam Ferndale Repub Randburg     Gpza,PnP Fam Ferndale Repub RANDBURG     GPZA,Cash Withdrawal,,-1000.00,,29464.95
+24,2282980804,2024-11-06,2024-11-06 14:52,Immediate Payment Fee,,Fees,,,-1.00,30464.95
+25,2282980804,2024-11-06,2024-11-06 14:52,Banking App Immediate Payment Sharda,SHARDA,Digital Payments,,-200.00,,30465.95
+26,2282980804,2024-11-05,2024-11-05 13:43,Banking App Transfer to Credit Card (6013080266) Transfer,Transfer,Transfer,,-20000.00,,30665.95
+27,2282980804,2024-11-04,2024-11-04 21:24,Immediate Payment Fee,,Fees,,,-1.00,50665.95
+28,2282980804,2024-11-04,2024-11-04 21:24,Banking App Immediate Payment Trish All Pools,TRISH ALL POOLS,Digital Payments,,-1950.00,,50666.95
+29,2282980804,2024-11-04,2024-11-04 10:22,Banking App Transfer to Credit Card (6013080266) Transfer,Transfer,Transfer,,-18000.00,,52616.95
