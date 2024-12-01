@@ -10,8 +10,15 @@ from io import StringIO
 from .models import PDFContent
 from .forms import CSVUploadForm
 import logging
+from rest_framework import viewsets
+from .models import PDFContent
+from .serializers import PDFContentSerializer
 
 logger = logging.getLogger('django')
+
+class PDFContentViewSet(viewsets.ModelViewSet):
+    queryset = PDFContent.objects.all()
+    serializer_class = PDFContentSerializer
 
 def home(request):
     return render(request, 'home.html')
@@ -26,25 +33,6 @@ def remove_duplicates(text):
                 seen.add(word.lower())
         return ' '.join(unique_words)
     return text
-
-import pandas as pd
-import html
-from io import StringIO
-from django.http import HttpResponse
-from django.shortcuts import redirect, render
-from .forms import CSVUploadForm
-from .models import PDFContent
-from datetime import datetime
-
-import matplotlib.pyplot as plt
-import pandas as pd
-import html
-from io import StringIO, BytesIO
-from django.http import HttpResponse
-from django.shortcuts import redirect, render
-from .forms import CSVUploadForm
-from .models import PDFContent
-from datetime import datetime
 
 def upload_csv(request):
     if request.method == 'POST':
