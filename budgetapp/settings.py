@@ -63,6 +63,9 @@ ALLOWED_HOSTS = []
 #    BASE_DIR / "static",
 #    os.path.join(BASE_DIR, 'frontend/dist'), # Add this line
 #]
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8080",
+]
 
 INSTALLED_APPS = [
     'budgetapp',
@@ -90,7 +93,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ORIGIN_ALLOW_ALL = True  # Allow all origins (for development purposes only)
+CORS_ORIGIN_ALLOW_ALL = False  # Allow all origins (for development purposes only)
 ROOT_URLCONF = 'budgetapp.urls'
 
 TEMPLATES = [

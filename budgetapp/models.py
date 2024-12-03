@@ -18,14 +18,21 @@ class CSVContent(models.Model):
         # Ensure the group is set to "Transfers" if the category is "Transfers"
         if self.category == "Transfers":
             self.group = "Transfers"
-        if self.category == "Fees":
+        if (self.category == "Fees" or
+           self.category == "Vehicle Insurance"):
             self.group = "Recurring"
         if self.category == "Salary" or self.category == "Other Income":
             self.group = "Income"
         if (self.category == "Groceries" or
             self.category == "Takeaways" or
             self.category == "Restaurants" or
-            self.category == "Fuel"):
+            self.category == "Fuel" or
+            self.category == "Clothing & Shoes" or
+            self.category == "Doctors & Therapists" or
+            self.category == "Gifts" or
+            self.category == "Parking" or
+            self.category == "Other Transport" or
+            self.category == "Sport & Hobbies"):
 
             self.group = "Day to Day"
         super().save(*args, **kwargs)

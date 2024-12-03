@@ -3,7 +3,6 @@ from social_django.utils import load_strategy, load_backend
 from social_core.exceptions import MissingBackend, AuthException
 from django.contrib.auth import login as auth_login
 from django.http import HttpResponse
-import html
 import datetime
 import pandas as pd
 from io import StringIO
@@ -16,7 +15,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from .models import CSVContent
 from .serializers import CSVContentSerializer
-from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
 
 logger = logging.getLogger('django')
 
@@ -51,11 +50,8 @@ def upload_csv(request):
         if form.is_valid():
             csv_text = form.cleaned_data['csv_text']
 
-            # Sanitize input
-            sanitized_csv_text = html.escape(csv_text)
-
             # Validate and process CSV content
-            csv_data = StringIO(sanitized_csv_text)
+            csv_data = StringIO(csv_text)
             try:
                 # Read CSV data with proper handling of empty fields
                 df = pd.read_csv(csv_data, delimiter=',', keep_default_na=False)
@@ -70,7 +66,7 @@ def upload_csv(request):
                 df = df.fillna(0)  # Handle empty numeric fields
 
                 # Remove whitespace and duplicate words from all string fields
-                df = df.map(lambda x: x.strip() if isinstance(x, str) else x)
+                df = df.applymap(lambda x: x.strip() if isinstance(x, str) else x)
 
                 # Convert 'Transaction Date' to timezone-aware datetime
                 df['Transaction Date'] = df['Transaction Date'].apply(lambda x: timezone.make_aware(datetime.datetime.strptime(x, '%Y-%m-%d %H:%M'), timezone=pytz.UTC) if isinstance(x, str) else x)
@@ -113,7 +109,6 @@ def upload_csv(request):
 
     return render(request, 'upload.html', {'form': form})
 
-# The rest of your code remains unchanged
 def plot_balance_graph(request):
     transactions = CSVContent.objects.all().order_by('transaction_date')  # Sorting in ascending order for the graph
     dates = [transaction.transaction_date for transaction in transactions]
@@ -143,6 +138,13 @@ def delete_transaction(request, transaction_id):
     transaction = get_object_or_404(CSVContent, id=transaction_id)
     transaction.delete()
     return redirect('view_transactions')
+
+def delete_all_transactions(request):
+    try:
+        CSVContent.objects.all().delete()
+        return JsonResponse({'message': 'All transactions deleted successfully!'}, status=200)
+    except Exception as e:
+        return JsonResponse({'message': 'Error deleting transactions', 'error': str(e)}, status=500)
 
 def google_login(request):
     if request.user.is_authenticated:
