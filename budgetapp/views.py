@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from social_django.utils import load_strategy, load_backend
 from social_core.exceptions import MissingBackend, AuthException
 from django.contrib.auth import login as auth_login
-from django.conf import settings
 from django.http import HttpResponse
 import html
 import datetime
@@ -10,17 +9,26 @@ import pandas as pd
 from io import StringIO
 from .forms import CSVUploadForm
 import logging
-from rest_framework import viewsets
-from .models import CSVContent
-from .serializers import CSVContentSerializer
 from django.utils import timezone
 import pytz
+from rest_framework import viewsets
+from rest_framework.response import Response
+from rest_framework.decorators import action
+from .models import CSVContent
+from .serializers import CSVContentSerializer
+from django.shortcuts import get_object_or_404
 
 logger = logging.getLogger('django')
 
 class CSVContentViewSet(viewsets.ModelViewSet):
     queryset = CSVContent.objects.all()
     serializer_class = CSVContentSerializer
+
+    @action(detail=True, methods=['delete'])
+    def delete_transaction(self, request, pk=None):
+        csv = get_object_or_404(CSVContent, id=pk)
+        csv.delete()
+        return Response({'message': 'Transaction deleted successfully!'}, status=200)
 
 def home(request):
     return render(request, 'home.html')
@@ -135,7 +143,6 @@ def delete_transaction(request, transaction_id):
     csv = get_object_or_404(CSVContent, id=transaction_id)
     csv.delete()
     return redirect('view_transactions')
-
 
 def google_login(request):
     if request.user.is_authenticated:
