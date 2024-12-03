@@ -35,8 +35,9 @@
         .description-col { width: 250px; }
         .original-description-col { width: 250px; }
         .category-col { width: 150px; }
-        .money-in-col { width: 120px; }
+        .type-col { width: 150px; }
         .money-out-col { width: 120px; }
+        .money-in-col { width: 120px; }
         .fee-col { width: 100px; }
         .balance-col { width: 150px; }
         .actions-col { width: 100px; }
@@ -88,8 +89,9 @@
                     <th class="description-col">Description</th>
                     <th class="original-description-col">Original Description</th>
                     <th class="category-col">Category</th>
-                    <th class="money-in-col">Money In</th>
+                    <th class="type-col">Type</th>
                     <th class="money-out-col">Money Out</th>
+                    <th class="money-in-col">Money In</th>
                     <th class="fee-col">Fee</th>
                     <th class="balance-col">Balance</th>
                     <th class="actions-col">Actions</th>
@@ -98,16 +100,17 @@
             <tbody>
                 {% for transaction in transactions %}
                     <tr>
-                        <td class="account-col">{{ transaction.field2 }}</td>
-                        <td class="posting-date-col">{{ transaction.field3 }}</td>
-                        <td class="transaction-date-col">{{ transaction.field4 }}</td>
-                        <td class="description-col">{{ transaction.field5 }}</td>
-                        <td class="original-description-col">{{ transaction.field6 }}</td>
-                        <td class="category-col">{{ transaction.field7 }}</td>
-                        <td class="money-in-col">{{ transaction.field8 }}</td>
-                        <td class="money-out-col">{{ transaction.field9 }}</td>
-                        <td class="fee-col">{{ transaction.field10 }}</td>
-                        <td class="balance-col">{{ transaction.field11 }}</td>
+                        <td class="account-col">{{ transaction.account_number }}</td>
+                        <td class="posting-date-col">{{ transaction.posting_date }}</td>
+                        <td class="transaction-date-col">{{ transaction.transaction_date }}</td>
+                        <td class="description-col">{{ transaction.description }}</td>
+                        <td class="original-description-col">{{ transaction.original_description }}</td>
+                        <td class="category-col">{{ transaction.category }}</td>
+                        <td class="type-col">{{ transaction.type }}</td>
+                        <td class="money-out-col">{{ transaction.money_out }}</td>
+                        <td class="money-in-col">{{ transaction.money_in }}</td>
+                        <td class="fee-col">{{ transaction.fees }}</td>
+                        <td class="balance-col">{{ transaction.balance }}</td>
                         <td class="actions-col"><a href="{% url 'delete_transaction' transaction.id %}">Delete</a></td>
                     </tr>
                 {% endfor %}
@@ -119,8 +122,8 @@
             const data = [
                 {% for row in transactions %}
                 {
-                    date: new Date("{{ row.field4|date:'Y-m-d\\TH:i' }}"),
-                    balance: {{ row.field11 }}
+                    date: new Date("{{ row.transaction_date|date:'Y-m-d\\TH:i' }}"),
+                    balance: {{ row.balance }}
                 },
                 {% endfor %}
             ];

@@ -85,21 +85,21 @@ def upload_csv(request):
 
                     # Check for existing record
                     existing = CSVContent.objects.filter(
-                        field4=row['Transaction Date'],
+                        transaction_date=row['Transaction Date'],
                     ).exists()
 
                     if not existing:
                         csv_content = CSVContent(
-                            field2=row['Account'],
-                            field3=row['Posting Date'],
-                            field4=row['Transaction Date'],
-                            field5=row['Description'],
-                            field6=row['Original Description'],
-                            field7=row['Category'],
-                            field8=row['Money In'],
-                            field9=row['Money Out'],
-                            field10=row['Fee'],
-                            field11=row['Balance']
+                            account_number=row['Account'],
+                            posting_date=row['Posting Date'],
+                            transaction_date=row['Transaction Date'],
+                            description=row['Description'],
+                            original_description=row['Original Description'],
+                            category=row['Category'],
+                            money_in=row['Money In'],
+                            money_out=row['Money Out'],
+                            fees=row['Fee'],
+                            balance=row['Balance']
                         )
                         csv_content.save()
                     else:
@@ -115,9 +115,9 @@ def upload_csv(request):
 
 # The rest of your code remains unchanged
 def plot_balance_graph(request):
-    pdfs = CSVContent.objects.all().order_by('field4')  # Sorting in ascending order for the graph
-    dates = [pdf.field4 for pdf in pdfs]
-    balances = [pdf.field11 for pdf in pdfs]
+    transactions = CSVContent.objects.all().order_by('transaction_date')  # Sorting in ascending order for the graph
+    dates = [transaction.transaction_date for transaction in transactions]
+    balances = [transaction.balance for transaction in transactions]
 
     plt.figure(figsize=(10, 6))
     plt.plot(dates, balances, marker='o')
@@ -136,12 +136,12 @@ def plot_balance_graph(request):
     return HttpResponse(buffer, content_type='image/png')
 
 def view_transactions(request):
-    transactions = CSVContent.objects.all().order_by('-field4')  # Assuming field4 is Transaction Date
+    transactions = CSVContent.objects.all().order_by('-transaction_date')  # Sorting by Transaction Date
     return render(request, 'view_transactions.html', {'transactions': transactions})
 
 def delete_transaction(request, transaction_id):
-    csv = get_object_or_404(CSVContent, id=transaction_id)
-    csv.delete()
+    transaction = get_object_or_404(CSVContent, id=transaction_id)
+    transaction.delete()
     return redirect('view_transactions')
 
 def google_login(request):
