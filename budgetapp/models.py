@@ -11,3 +11,4 @@ class CSVContent(models.Model):
     field9 = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     field10 = models.CharField(max_length=255, blank=True, null=True)
     field11 = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    field12 = models.CharField(max_length=255, blank=True, null=True)
