@@ -1,2 +1,5 @@
 myvenv
 .idea
+budgetapp/migrations
+db.sqlite3
+budgetapp/__pycache__/
